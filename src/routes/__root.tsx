@@ -71,14 +71,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Delton Quiz — Gamified learning that actually sticks" },
-      { name: "description", content: "Lives, streaks and leaderboards. Bite-sized quizzes you can't put down." },
-      { name: "author", content: "Delton Quiz" },
-      { property: "og:title", content: "Delton Quiz" },
-      { property: "og:description", content: "Gamified quizzes with lives, streaks and leaderboards." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#D7C6FF" },
+      { title: "Quizz" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
