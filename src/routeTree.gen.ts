@@ -10,36 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ResultsRouteImport } from './routes/results'
-import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
-import { Route as ConvertRouteImport } from './routes/convert'
-import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as QuizQuizIdRouteImport } from './routes/quiz.$quizId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResultsRoute = ResultsRouteImport.update({
-  id: '/results',
-  path: '/results',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LeaderboardsRoute = LeaderboardsRouteImport.update({
-  id: '/leaderboards',
-  path: '/leaderboards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConvertRoute = ConvertRouteImport.update({
-  id: '/convert',
-  path: '/convert',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriesRoute = CategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -47,78 +22,31 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuizQuizIdRoute = QuizQuizIdRouteImport.update({
-  id: '/quiz/$quizId',
-  path: '/quiz/$quizId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/categories': typeof CategoriesRoute
-  '/convert': typeof ConvertRoute
-  '/leaderboards': typeof LeaderboardsRoute
-  '/results': typeof ResultsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/quiz/$quizId': typeof QuizQuizIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/categories': typeof CategoriesRoute
-  '/convert': typeof ConvertRoute
-  '/leaderboards': typeof LeaderboardsRoute
-  '/results': typeof ResultsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/quiz/$quizId': typeof QuizQuizIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/categories': typeof CategoriesRoute
-  '/convert': typeof ConvertRoute
-  '/leaderboards': typeof LeaderboardsRoute
-  '/results': typeof ResultsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/quiz/$quizId': typeof QuizQuizIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/categories'
-    | '/convert'
-    | '/leaderboards'
-    | '/results'
-    | '/sitemap.xml'
-    | '/quiz/$quizId'
+  fullPaths: '/' | '/sitemap.xml'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/categories'
-    | '/convert'
-    | '/leaderboards'
-    | '/results'
-    | '/sitemap.xml'
-    | '/quiz/$quizId'
-  id:
-    | '__root__'
-    | '/'
-    | '/categories'
-    | '/convert'
-    | '/leaderboards'
-    | '/results'
-    | '/sitemap.xml'
-    | '/quiz/$quizId'
+  to: '/' | '/sitemap.xml'
+  id: '__root__' | '/' | '/sitemap.xml'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CategoriesRoute: typeof CategoriesRoute
-  ConvertRoute: typeof ConvertRoute
-  LeaderboardsRoute: typeof LeaderboardsRoute
-  ResultsRoute: typeof ResultsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  QuizQuizIdRoute: typeof QuizQuizIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -130,34 +58,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/results': {
-      id: '/results'
-      path: '/results'
-      fullPath: '/results'
-      preLoaderRoute: typeof ResultsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/leaderboards': {
-      id: '/leaderboards'
-      path: '/leaderboards'
-      fullPath: '/leaderboards'
-      preLoaderRoute: typeof LeaderboardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/convert': {
-      id: '/convert'
-      path: '/convert'
-      fullPath: '/convert'
-      preLoaderRoute: typeof ConvertRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categories': {
-      id: '/categories'
-      path: '/categories'
-      fullPath: '/categories'
-      preLoaderRoute: typeof CategoriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -165,25 +65,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quiz/$quizId': {
-      id: '/quiz/$quizId'
-      path: '/quiz/$quizId'
-      fullPath: '/quiz/$quizId'
-      preLoaderRoute: typeof QuizQuizIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CategoriesRoute: CategoriesRoute,
-  ConvertRoute: ConvertRoute,
-  LeaderboardsRoute: LeaderboardsRoute,
-  ResultsRoute: ResultsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  QuizQuizIdRoute: QuizQuizIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
