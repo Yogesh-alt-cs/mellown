@@ -27,7 +27,7 @@ function PlayPage() {
       topic: topic ?? cat?.topicSeed ?? "general knowledge",
       label: topic ?? cat?.name ?? "Quiz",
       difficulty: difficulty ?? cat?.difficulty ?? "Medium",
-      count: count ?? 5,
+      count: count ?? 10,
       category: cat?.name,
     }),
     [topic, difficulty, count, cat],
