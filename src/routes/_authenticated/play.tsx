@@ -113,6 +113,7 @@ function QuizRunner({
   const [score, setScore] = useState(0);
   const [correct, setCorrect] = useState(0);
   const [seconds, setSeconds] = useState(30);
+  const [muted, setMuted] = useState(isMuted());
 
   const q = questions[index];
   const progress = ((index + (reveal ? 1 : 0)) / questions.length) * 100;
@@ -130,15 +131,19 @@ function QuizRunner({
     setPicked(p);
     setReveal(true);
     if (p === q.correct) {
+      sfx.correct();
       setScore((s) => s + 100);
       setCorrect((c) => c + 1);
     } else {
+      sfx.wrong();
       setLives((l) => Math.max(0, l - 1));
     }
   }
 
   function next() {
+    sfx.tap();
     if (index === questions.length - 1 || lives === 0) {
+      sfx.finish();
       onFinish(score, correct);
       return;
     }
