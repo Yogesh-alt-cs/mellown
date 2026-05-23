@@ -160,6 +160,13 @@ function QuizRunner({
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setMuted(toggleMuted())}
+            aria-label={muted ? "Unmute" : "Mute"}
+            className="brutal-press grid h-11 w-11 place-items-center rounded-2xl border-2 border-black bg-white shadow-brutal-sm"
+          >
+            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </button>
           <div className="flex h-11 items-center gap-1 rounded-2xl border-2 border-black bg-white px-3 shadow-brutal-sm">
             {Array.from({ length: 3 }).map((_, i) => (
               <Heart key={i} className={`h-4 w-4 ${i < lives ? "fill-red-500 text-red-500" : "text-black/20"}`} />
