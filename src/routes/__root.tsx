@@ -107,7 +107,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="app-frame-outer">
+        <div className="app-frame">
+          <Outlet />
+        </div>
+      </div>
     </QueryClientProvider>
   );
 }
