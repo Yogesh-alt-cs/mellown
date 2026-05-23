@@ -231,6 +231,3 @@ function Card({ label, value, icon, bg }: { label: string; value: React.ReactNod
     </div>
   );
 }
-
-// silence unused
-void Medal; void Crown;
