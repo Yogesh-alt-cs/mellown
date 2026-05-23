@@ -160,6 +160,24 @@ export const getMyStats = createServerFn({ method: "GET" })
     };
   });
 
+const ProfileInput = z.object({
+  display_name: z.string().min(1).max(40).optional(),
+  avatar_emoji: z.string().min(1).max(8).optional(),
+});
+
+export const updateProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => ProfileInput.parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const patch: { display_name?: string; avatar_emoji?: string } = {};
+    if (data.display_name) patch.display_name = data.display_name;
+    if (data.avatar_emoji) patch.avatar_emoji = data.avatar_emoji;
+    const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const getLeaderboard = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
