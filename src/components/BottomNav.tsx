@@ -1,12 +1,11 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, LayoutGrid, BarChart3, Users, User } from "lucide-react";
+import { Home, LayoutGrid, BarChart3, User } from "lucide-react";
 
 type Tab = { to: string; label: string; icon: typeof Home };
 const tabs: Tab[] = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/browse", label: "Categories", icon: LayoutGrid },
   { to: "/dashboard", label: "Dashboard", icon: BarChart3 },
-  { to: "/friends", label: "Friends", icon: Users },
   { to: "/me", label: "Profile", icon: User },
 ];
 
@@ -14,10 +13,10 @@ export function BottomNav() {
   const { pathname } = useLocation();
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 px-3"
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 10px)" }}
+      className="sticky bottom-0 left-0 right-0 z-40 px-3"
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 10px)", paddingTop: 8 }}
     >
-      <ul className="mx-auto flex max-w-md items-stretch justify-between gap-1 rounded-3xl border-2 border-black bg-white/95 p-1.5 shadow-brutal backdrop-blur">
+      <ul className="mx-auto flex items-stretch justify-between gap-1 rounded-3xl border-2 border-black bg-white/95 p-1.5 shadow-brutal backdrop-blur">
         {tabs.map((t) => {
           const active = pathname === t.to || pathname.startsWith(t.to + "/");
           const Icon = t.icon;
