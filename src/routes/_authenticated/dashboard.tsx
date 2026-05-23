@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getMyStats, getLeaderboard } from "@/lib/quiz.functions";
-import { Trophy, Zap, Flame, Target, Calendar, BarChart3, ArrowRight, Medal, Crown } from "lucide-react";
+import { Trophy, Zap, Flame, Target, Calendar, BarChart3, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
