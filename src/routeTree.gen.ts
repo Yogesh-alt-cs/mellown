@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as ConvertRouteImport } from './routes/convert'
@@ -16,6 +17,11 @@ import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuizQuizIdRouteImport } from './routes/quiz.$quizId'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/convert': typeof ConvertRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/results': typeof ResultsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/convert': typeof ConvertRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/results': typeof ResultsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/convert': typeof ConvertRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/results': typeof ResultsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/convert'
     | '/leaderboards'
     | '/results'
+    | '/sitemap.xml'
     | '/quiz/$quizId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/convert'
     | '/leaderboards'
     | '/results'
+    | '/sitemap.xml'
     | '/quiz/$quizId'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/convert'
     | '/leaderboards'
     | '/results'
+    | '/sitemap.xml'
     | '/quiz/$quizId'
   fileRoutesById: FileRoutesById
 }
@@ -105,11 +117,19 @@ export interface RootRouteChildren {
   ConvertRoute: typeof ConvertRoute
   LeaderboardsRoute: typeof LeaderboardsRoute
   ResultsRoute: typeof ResultsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   QuizQuizIdRoute: typeof QuizQuizIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/results': {
       id: '/results'
       path: '/results'
@@ -161,8 +181,19 @@ const rootRouteChildren: RootRouteChildren = {
   ConvertRoute: ConvertRoute,
   LeaderboardsRoute: LeaderboardsRoute,
   ResultsRoute: ResultsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   QuizQuizIdRoute: QuizQuizIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
