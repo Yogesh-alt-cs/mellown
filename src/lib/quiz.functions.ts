@@ -14,7 +14,7 @@ export type GeneratedQuestion = z.infer<typeof QuestionSchema>;
 const Input = z.object({
   topic: z.string().min(2).max(120),
   difficulty: z.enum(["Easy", "Medium", "Hard"]).default("Medium"),
-  count: z.number().int().min(3).max(10).default(5),
+  count: z.number().int().min(3).max(50).default(10),
 });
 
 export const generateQuiz = createServerFn({ method: "POST" })
