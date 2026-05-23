@@ -1,48 +1,37 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Grid3x3, Trophy, User, Sparkles } from "lucide-react";
+import { Home, LayoutGrid, BarChart3, Users, User } from "lucide-react";
 
-type Tab = { to: string; label: string; icon: typeof Home; primary?: boolean };
+type Tab = { to: string; label: string; icon: typeof Home };
 const tabs: Tab[] = [
   { to: "/home", label: "Home", icon: Home },
-  { to: "/browse", label: "Browse", icon: Grid3x3 },
-  { to: "/create", label: "Create", icon: Sparkles, primary: true },
-  { to: "/ranks", label: "Ranks", icon: Trophy },
+  { to: "/browse", label: "Categories", icon: LayoutGrid },
+  { to: "/dashboard", label: "Dashboard", icon: BarChart3 },
+  { to: "/friends", label: "Friends", icon: Users },
   { to: "/me", label: "Profile", icon: User },
 ];
 
 export function BottomNav() {
   const { pathname } = useLocation();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-black bg-background pb-[env(safe-area-inset-bottom)]">
-      <ul className="mx-auto flex max-w-md items-stretch justify-around">
+    <nav
+      className="fixed inset-x-0 bottom-0 z-40 px-3"
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 10px)" }}
+    >
+      <ul className="mx-auto flex max-w-md items-stretch justify-between gap-1 rounded-3xl border-2 border-black bg-white/95 p-1.5 shadow-brutal backdrop-blur">
         {tabs.map((t) => {
-          const active = pathname.startsWith(t.to);
+          const active = pathname === t.to || pathname.startsWith(t.to + "/");
           const Icon = t.icon;
-          if (t.primary) {
-            return (
-              <li key={t.to} className="-mt-5 flex-1">
-                <Link
-                  to={t.to}
-                  className="brutal-press mx-auto grid h-14 w-14 place-items-center rounded-2xl border-2 border-black bg-primary shadow-brutal-sm"
-                  aria-label={t.label}
-                >
-                  <Icon className="h-6 w-6" />
-                </Link>
-              </li>
-            );
-          }
           return (
             <li key={t.to} className="flex-1">
               <Link
                 to={t.to}
-                className="flex h-16 flex-col items-center justify-center gap-1"
                 aria-label={t.label}
+                className={`flex h-14 flex-col items-center justify-center gap-0.5 rounded-2xl transition-all duration-200 ${
+                  active ? "bg-primary border-2 border-black shadow-brutal-sm scale-[1.02]" : "border-2 border-transparent"
+                }`}
               >
-                <Icon
-                  className={`h-5 w-5 ${active ? "" : "text-black/40"}`}
-                  strokeWidth={active ? 2.5 : 2}
-                />
-                <span className={`text-[10px] font-bold ${active ? "" : "text-black/40"}`}>
+                <Icon className={`h-5 w-5 ${active ? "" : "text-black/50"}`} strokeWidth={active ? 2.6 : 2} />
+                <span className={`text-[10px] font-bold leading-none ${active ? "" : "text-black/50"}`}>
                   {t.label}
                 </span>
               </Link>

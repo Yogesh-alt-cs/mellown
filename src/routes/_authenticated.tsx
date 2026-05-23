@@ -34,7 +34,7 @@ function AuthLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-[100dvh] bg-background" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)" }}>
       <Outlet />
       <BottomNav />
     </div>

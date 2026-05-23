@@ -29,7 +29,7 @@ function LoginPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -38,7 +38,18 @@ function LoginPage() {
           },
         });
         if (error) throw error;
-        toast.success("Check your email to confirm your account.");
+        if (data.session) {
+          toast.success("Account created!");
+          navigate({ to: "/home", replace: true });
+        } else {
+          // Fallback: try immediate sign-in (auto-confirm is on)
+          const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInErr) {
+            toast.success("Check your email to confirm your account.");
+          } else {
+            navigate({ to: "/home", replace: true });
+          }
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;

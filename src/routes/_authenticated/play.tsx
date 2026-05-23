@@ -2,15 +2,16 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { ArrowLeft, Heart, Timer, Check, X, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, Timer, Check, X, Loader2, Volume2, VolumeX } from "lucide-react";
 import { generateQuiz, saveQuizResult, type GeneratedQuestion } from "@/lib/quiz.functions";
 import { categories } from "@/lib/categories";
+import { sfx, isMuted, toggleMuted } from "@/lib/sfx";
 import { toast } from "sonner";
 
 const search = z.object({
   topic: z.string().optional(),
   difficulty: z.enum(["Easy", "Medium", "Hard"]).optional(),
-  count: z.coerce.number().int().min(3).max(10).optional(),
+  count: z.coerce.number().int().min(3).max(50).optional(),
   category: z.string().optional(),
 });
 
@@ -27,7 +28,7 @@ function PlayPage() {
       topic: topic ?? cat?.topicSeed ?? "general knowledge",
       label: topic ?? cat?.name ?? "Quiz",
       difficulty: difficulty ?? cat?.difficulty ?? "Medium",
-      count: count ?? 5,
+      count: count ?? 10,
       category: cat?.name,
     }),
     [topic, difficulty, count, cat],
@@ -112,6 +113,7 @@ function QuizRunner({
   const [score, setScore] = useState(0);
   const [correct, setCorrect] = useState(0);
   const [seconds, setSeconds] = useState(30);
+  const [muted, setMuted] = useState(isMuted());
 
   const q = questions[index];
   const progress = ((index + (reveal ? 1 : 0)) / questions.length) * 100;
@@ -129,15 +131,19 @@ function QuizRunner({
     setPicked(p);
     setReveal(true);
     if (p === q.correct) {
+      sfx.correct();
       setScore((s) => s + 100);
       setCorrect((c) => c + 1);
     } else {
+      sfx.wrong();
       setLives((l) => Math.max(0, l - 1));
     }
   }
 
   function next() {
+    sfx.tap();
     if (index === questions.length - 1 || lives === 0) {
+      sfx.finish();
       onFinish(score, correct);
       return;
     }
@@ -154,6 +160,13 @@ function QuizRunner({
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setMuted(toggleMuted())}
+            aria-label={muted ? "Unmute" : "Mute"}
+            className="brutal-press grid h-11 w-11 place-items-center rounded-2xl border-2 border-black bg-white shadow-brutal-sm"
+          >
+            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </button>
           <div className="flex h-11 items-center gap-1 rounded-2xl border-2 border-black bg-white px-3 shadow-brutal-sm">
             {Array.from({ length: 3 }).map((_, i) => (
               <Heart key={i} className={`h-4 w-4 ${i < lives ? "fill-red-500 text-red-500" : "text-black/20"}`} />

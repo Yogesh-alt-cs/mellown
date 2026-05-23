@@ -6,20 +6,14 @@ export const Route = createFileRoute("/_authenticated/create")({
   component: CreatePage,
 });
 
-const suggestions = [
-  "World capitals",
-  "Greek mythology",
-  "Star Wars trivia",
-  "Python basics",
-  "90s pop music",
-  "Football World Cup",
-];
+const suggestions = ["World capitals", "Greek mythology", "Star Wars trivia", "Python basics", "90s pop music", "Football World Cup"];
+const COUNTS = [10, 20, 30, 50] as const;
 
 function CreatePage() {
   const navigate = useNavigate();
   const [topic, setTopic] = useState("");
   const [difficulty, setDifficulty] = useState<"Easy" | "Medium" | "Hard">("Medium");
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState<number>(10);
 
   function start() {
     const t = topic.trim();
@@ -64,7 +58,7 @@ function CreatePage() {
             <button
               key={d}
               onClick={() => setDifficulty(d)}
-              className={`h-12 rounded-2xl border-2 border-black font-display shadow-brutal-sm ${
+              className={`h-12 rounded-2xl border-2 border-black font-display shadow-brutal-sm transition-all ${
                 difficulty === d ? "bg-primary" : "bg-white"
               }`}
             >
@@ -75,18 +69,20 @@ function CreatePage() {
       </div>
 
       <div className="mt-6">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase text-black/60">Questions</span>
-          <span className="font-display text-lg">{count}</span>
+        <span className="text-xs font-bold uppercase text-black/60">Questions</span>
+        <div className="mt-2 grid grid-cols-4 gap-2">
+          {COUNTS.map((n) => (
+            <button
+              key={n}
+              onClick={() => setCount(n)}
+              className={`h-14 rounded-2xl border-2 border-black font-display text-lg shadow-brutal-sm transition-all ${
+                count === n ? "bg-primary" : "bg-white"
+              }`}
+            >
+              {n}
+            </button>
+          ))}
         </div>
-        <input
-          type="range"
-          min={3}
-          max={10}
-          value={count}
-          onChange={(e) => setCount(Number(e.target.value))}
-          className="mt-2 w-full accent-black"
-        />
       </div>
 
       <button

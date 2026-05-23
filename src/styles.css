@@ -7,8 +7,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Delton Quiz — Neo-Brutalist Design System
- * Purple background, vibrant yellow accent, black borders, hard shadows.
+ * Mellow Quiz — Neo-Brutalist Design System
+ * Soft pastels, bold black borders, hard shadows.
  */
 
 @theme inline {
@@ -114,12 +114,18 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    min-height: 100dvh;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.02em;
   }
+  button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 @layer utilities {
