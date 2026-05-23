@@ -2,9 +2,10 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { ArrowLeft, Heart, Timer, Check, X, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, Timer, Check, X, Loader2, Volume2, VolumeX } from "lucide-react";
 import { generateQuiz, saveQuizResult, type GeneratedQuestion } from "@/lib/quiz.functions";
 import { categories } from "@/lib/categories";
+import { sfx, isMuted, toggleMuted } from "@/lib/sfx";
 import { toast } from "sonner";
 
 const search = z.object({
