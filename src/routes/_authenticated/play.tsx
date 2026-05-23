@@ -10,7 +10,7 @@ import { toast } from "sonner";
 const search = z.object({
   topic: z.string().optional(),
   difficulty: z.enum(["Easy", "Medium", "Hard"]).optional(),
-  count: z.coerce.number().int().min(3).max(10).optional(),
+  count: z.coerce.number().int().min(3).max(50).optional(),
   category: z.string().optional(),
 });
 
