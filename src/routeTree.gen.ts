@@ -17,6 +17,7 @@ import { Route as AuthenticatedRanksRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedPlayRouteImport } from './routes/_authenticated/play'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedFriendsRouteImport } from './routes/_authenticated/friends'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCreateRouteImport } from './routes/_authenticated/create'
 import { Route as AuthenticatedBrowseRouteImport } from './routes/_authenticated/browse'
@@ -60,6 +61,11 @@ const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedFriendsRoute = AuthenticatedFriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/browse': typeof AuthenticatedBrowseRoute
   '/create': typeof AuthenticatedCreateRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/friends': typeof AuthenticatedFriendsRoute
   '/home': typeof AuthenticatedHomeRoute
   '/me': typeof AuthenticatedMeRoute
   '/play': typeof AuthenticatedPlayRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/browse': typeof AuthenticatedBrowseRoute
   '/create': typeof AuthenticatedCreateRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/friends': typeof AuthenticatedFriendsRoute
   '/home': typeof AuthenticatedHomeRoute
   '/me': typeof AuthenticatedMeRoute
   '/play': typeof AuthenticatedPlayRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_authenticated/browse': typeof AuthenticatedBrowseRoute
   '/_authenticated/create': typeof AuthenticatedCreateRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/friends': typeof AuthenticatedFriendsRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/play': typeof AuthenticatedPlayRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/create'
     | '/dashboard'
+    | '/friends'
     | '/home'
     | '/me'
     | '/play'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/create'
     | '/dashboard'
+    | '/friends'
     | '/home'
     | '/me'
     | '/play'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_authenticated/browse'
     | '/_authenticated/create'
     | '/_authenticated/dashboard'
+    | '/_authenticated/friends'
     | '/_authenticated/home'
     | '/_authenticated/me'
     | '/_authenticated/play'
@@ -218,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/friends': {
+      id: '/_authenticated/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof AuthenticatedFriendsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -246,6 +265,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedBrowseRoute: typeof AuthenticatedBrowseRoute
   AuthenticatedCreateRoute: typeof AuthenticatedCreateRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedFriendsRoute: typeof AuthenticatedFriendsRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedPlayRoute: typeof AuthenticatedPlayRoute
@@ -257,6 +277,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedBrowseRoute: AuthenticatedBrowseRoute,
   AuthenticatedCreateRoute: AuthenticatedCreateRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedFriendsRoute: AuthenticatedFriendsRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedPlayRoute: AuthenticatedPlayRoute,
