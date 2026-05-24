@@ -37,11 +37,11 @@ function AuthLayout() {
     );
   }
 
-  const fullscreen = FULLSCREEN_ROUTES.some((r) => pathname.startsWith(r));
+  const fullscreen = !ready || FULLSCREEN_ROUTES.some((r) => pathname.startsWith(r));
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background">
-      <div className="flex-1 overflow-y-auto no-scrollbar">
+    <div className="app-shell bg-background">
+      <div className={`app-scroll no-scrollbar ${fullscreen ? "" : "app-scroll-with-nav"}`}>
         <Outlet />
       </div>
       {!fullscreen && <BottomNav />}
