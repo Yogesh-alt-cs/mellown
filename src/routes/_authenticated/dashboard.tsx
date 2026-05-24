@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getMyStats, getLeaderboard } from "@/lib/quiz.functions";
-import { Trophy, Zap, Flame, Target, Calendar, BarChart3, ArrowRight } from "lucide-react";
+import { Trophy, Zap, Flame, Target, Calendar, BarChart3, ArrowRight, Activity } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -132,15 +132,20 @@ function LeaderboardView() {
   const [lbTab, setLbTab] = useState<LbTab>("global");
   const fetchLb = useServerFn(getLeaderboard);
   const fetchStats = useServerFn(getMyStats);
-  const { data: lb, isLoading } = useQuery({ queryKey: ["leaderboard"], queryFn: () => fetchLb() });
+  const { data: lb, isLoading } = useQuery({ queryKey: ["leaderboard", lbTab], queryFn: () => fetchLb({ data: { period: lbTab } }) });
   const { data: stats } = useQuery({ queryKey: ["my-stats"], queryFn: () => fetchStats() });
 
   const myName = stats?.profile?.display_name;
+  const accuracyTrend = (stats?.recent ?? [])
+    .slice(0, 7)
+    .reverse()
+    .map((r) => (r.total > 0 ? Math.round((r.correct / r.total) * 100) : 0));
+  const myStreak = calculateRecentStreak(stats?.recent ?? []);
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-1 rounded-2xl border-2 border-black bg-white p-1 shadow-brutal-sm">
-        {(["global", "weekly", "friends"] as LbTab[]).map((t) => (
+      <div className="grid grid-cols-2 gap-1 rounded-2xl border-2 border-black bg-white p-1 shadow-brutal-sm">
+        {(["global", "weekly"] as LbTab[]).map((t) => (
           <button
             key={t}
             onClick={() => setLbTab(t)}
@@ -153,13 +158,12 @@ function LeaderboardView() {
         ))}
       </div>
 
-      {lbTab === "friends" ? (
-        <div className="mt-10 rounded-3xl border-2 border-dashed border-black/40 bg-white p-8 text-center">
-          <div className="text-5xl">🤝</div>
-          <p className="mt-3 font-display text-lg">Friends leaderboard coming soon</p>
-          <p className="mt-1 text-sm text-black/60">Invite friends and race head-to-head.</p>
-        </div>
-      ) : isLoading ? (
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <AccuracyGraph values={accuracyTrend} />
+        <StreakBadge days={myStreak} />
+      </div>
+
+      {isLoading ? (
         <div className="mt-10 grid place-items-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent" />
         </div>
