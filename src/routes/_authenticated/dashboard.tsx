@@ -216,6 +216,7 @@ function LeaderboardView() {
                   <div className="text-2xl">{p.avatar_emoji}</div>
                   <div className="min-w-0 flex-1 truncate font-display">
                     {p.display_name} {me && <span className="text-[10px] font-bold uppercase">· you</span>}
+                    <div className="text-[10px] font-bold text-black/60">{p.accuracy}% accuracy · {p.streak}d streak</div>
                   </div>
                   <div className="font-display tabular-nums">{p.score.toLocaleString()}</div>
                 </div>
