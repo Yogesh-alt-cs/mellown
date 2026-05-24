@@ -4,17 +4,17 @@ import { Home, LayoutGrid, BarChart3, User } from "lucide-react";
 type Tab = { to: string; label: string; icon: typeof Home };
 const tabs: Tab[] = [
   { to: "/home", label: "Home", icon: Home },
-  { to: "/browse", label: "Categories", icon: LayoutGrid },
+  { to: "/categories", label: "Categories", icon: LayoutGrid },
   { to: "/dashboard", label: "Dashboard", icon: BarChart3 },
-  { to: "/me", label: "Profile", icon: User },
+  { to: "/profile", label: "Profile", icon: User },
 ];
 
 export function BottomNav() {
   const { pathname } = useLocation();
   return (
     <nav
-      className="sticky bottom-0 left-0 right-0 z-40 px-3"
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 10px)", paddingTop: 8 }}
+      className="bottom-nav-fixed px-3"
+      style={{ paddingTop: 8 }}
     >
       <ul className="mx-auto flex items-stretch justify-between gap-1 rounded-3xl border-2 border-black bg-white/95 p-1.5 shadow-brutal backdrop-blur">
         {tabs.map((t) => {
