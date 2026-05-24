@@ -5,7 +5,7 @@ import { z } from "zod";
 import { ArrowLeft, Heart, Timer, Check, X, Loader2, Volume2, VolumeX } from "lucide-react";
 import { generateQuiz, saveQuizResult, type GeneratedQuestion } from "@/lib/quiz.functions";
 import { categories } from "@/lib/categories";
-import { sfx, isMuted, toggleMuted } from "@/lib/sfx";
+import { sfx, haptics, isMuted, toggleMuted } from "@/lib/sfx";
 import { toast } from "sonner";
 
 const search = z.object({
@@ -131,22 +131,29 @@ function QuizRunner({
     setPicked(p);
     setReveal(true);
     if (p === q.correct) {
+      haptics.correct();
       sfx.correct();
       setScore((s) => s + 100);
       setCorrect((c) => c + 1);
     } else {
+      haptics.wrong();
       sfx.wrong();
       setLives((l) => Math.max(0, l - 1));
     }
   }
 
   function next() {
+    haptics.tap();
     sfx.tap();
     if (index === questions.length - 1 || lives === 0) {
+      haptics.finish();
       sfx.finish();
       onFinish(score, correct);
       return;
     }
+    const nextIndex = index + 1;
+    const milestone = Math.round((nextIndex / questions.length) * 100);
+    if ([25, 50, 75].includes(milestone)) haptics.milestone();
     setIndex((i) => i + 1);
     setPicked(null);
     setReveal(false);
