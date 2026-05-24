@@ -35,6 +35,19 @@ export const sfx = {
   finish: () => { beep(523, 0.12, "triangle"); setTimeout(() => beep(659, 0.12, "triangle"), 120); setTimeout(() => beep(784, 0.2, "triangle"), 240); },
 };
 
+export const haptics = {
+  tap: () => vibrate(12),
+  correct: () => vibrate([18, 28, 28]),
+  wrong: () => vibrate([45, 35, 45]),
+  milestone: () => vibrate([25, 35, 25]),
+  finish: () => vibrate([35, 35, 55]),
+};
+
+function vibrate(pattern: VibratePattern) {
+  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") return;
+  navigator.vibrate(pattern);
+}
+
 export function isMuted() { return muted; }
 export function toggleMuted() {
   muted = !muted;

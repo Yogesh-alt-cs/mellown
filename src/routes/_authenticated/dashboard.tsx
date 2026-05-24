@@ -3,14 +3,14 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getMyStats, getLeaderboard } from "@/lib/quiz.functions";
-import { Trophy, Zap, Flame, Target, Calendar, BarChart3, ArrowRight } from "lucide-react";
+import { Trophy, Zap, Flame, Target, Calendar, BarChart3, ArrowRight, Activity } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
 type TopTab = "dashboard" | "leaderboard";
-type LbTab = "global" | "weekly" | "friends";
+type LbTab = "global" | "weekly";
 
 function DashboardPage() {
   const [tab, setTab] = useState<TopTab>("dashboard");
@@ -105,7 +105,7 @@ function DashboardView() {
       <h2 className="mt-8 font-display text-lg">Recent quizzes</h2>
       <div className="mt-3 space-y-2">
         {recent.length === 0 ? (
-          <Link to="/browse" className="brutal-press flex items-center justify-between rounded-2xl border-2 border-dashed border-black/40 bg-white p-5 text-left">
+          <Link to="/categories" className="brutal-press flex items-center justify-between rounded-2xl border-2 border-dashed border-black/40 bg-white p-5 text-left">
             <div>
               <div className="font-display">No quizzes yet</div>
               <div className="text-sm text-black/60">Play one to see stats!</div>
@@ -132,15 +132,20 @@ function LeaderboardView() {
   const [lbTab, setLbTab] = useState<LbTab>("global");
   const fetchLb = useServerFn(getLeaderboard);
   const fetchStats = useServerFn(getMyStats);
-  const { data: lb, isLoading } = useQuery({ queryKey: ["leaderboard"], queryFn: () => fetchLb() });
+  const { data: lb, isLoading } = useQuery({ queryKey: ["leaderboard", lbTab], queryFn: () => fetchLb({ data: { period: lbTab } }) });
   const { data: stats } = useQuery({ queryKey: ["my-stats"], queryFn: () => fetchStats() });
 
   const myName = stats?.profile?.display_name;
+  const accuracyTrend = (stats?.recent ?? [])
+    .slice(0, 7)
+    .reverse()
+    .map((r) => (r.total > 0 ? Math.round((r.correct / r.total) * 100) : 0));
+  const myStreak = calculateRecentStreak(stats?.recent ?? []);
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-1 rounded-2xl border-2 border-black bg-white p-1 shadow-brutal-sm">
-        {(["global", "weekly", "friends"] as LbTab[]).map((t) => (
+      <div className="grid grid-cols-2 gap-1 rounded-2xl border-2 border-black bg-white p-1 shadow-brutal-sm">
+        {(["global", "weekly"] as LbTab[]).map((t) => (
           <button
             key={t}
             onClick={() => setLbTab(t)}
@@ -153,13 +158,12 @@ function LeaderboardView() {
         ))}
       </div>
 
-      {lbTab === "friends" ? (
-        <div className="mt-10 rounded-3xl border-2 border-dashed border-black/40 bg-white p-8 text-center">
-          <div className="text-5xl">🤝</div>
-          <p className="mt-3 font-display text-lg">Friends leaderboard coming soon</p>
-          <p className="mt-1 text-sm text-black/60">Invite friends and race head-to-head.</p>
-        </div>
-      ) : isLoading ? (
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <AccuracyGraph values={accuracyTrend} />
+        <StreakBadge days={myStreak} />
+      </div>
+
+      {isLoading ? (
         <div className="mt-10 grid place-items-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent" />
         </div>
@@ -180,14 +184,15 @@ function LeaderboardView() {
               const medals = ["🥈", "🥇", "🥉"];
               const order = rank === 0 ? 1 : rank === 1 ? 0 : 2;
               return (
-                <div key={p.user_id} className="flex flex-col items-center">
-                  <div className="text-3xl">{medals[order]}</div>
-                  <div className="text-3xl">{p.avatar_emoji}</div>
+                <div key={p.user_id} className="leaderboard-podium flex flex-col items-center" style={{ animationDelay: `${order * 90}ms` }}>
+                  <div className="animate-float-slow text-3xl">{medals[order]}</div>
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-black bg-white text-3xl shadow-brutal-sm">{p.avatar_emoji}</div>
                   <div className="mt-1 max-w-full truncate text-center text-xs font-bold">{p.display_name}</div>
                   <div className={`mt-1 w-full ${heights[order]} ${colors[order]} flex items-center justify-center rounded-t-2xl border-2 border-black shadow-brutal-sm`}>
                     <div className="text-center">
                       <div className="font-display text-lg leading-none">#{rank + 1}</div>
                       <div className="text-[10px] font-bold">{p.score.toLocaleString()} XP</div>
+                      <div className="text-[10px] font-bold">{p.accuracy}% · {p.streak}d</div>
                     </div>
                   </div>
                 </div>
@@ -211,6 +216,7 @@ function LeaderboardView() {
                   <div className="text-2xl">{p.avatar_emoji}</div>
                   <div className="min-w-0 flex-1 truncate font-display">
                     {p.display_name} {me && <span className="text-[10px] font-bold uppercase">· you</span>}
+                    <div className="text-[10px] font-bold text-black/60">{p.accuracy}% accuracy · {p.streak}d streak</div>
                   </div>
                   <div className="font-display tabular-nums">{p.score.toLocaleString()}</div>
                 </div>
@@ -221,6 +227,58 @@ function LeaderboardView() {
       )}
     </>
   );
+}
+
+function AccuracyGraph({ values }: { values: number[] }) {
+  const bars = values.length > 0 ? values : [0, 0, 0, 0, 0];
+  return (
+    <div className="rounded-3xl border-2 border-black bg-white p-4 shadow-brutal-sm">
+      <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-black/60">
+        <Activity className="h-3.5 w-3.5" /> Accuracy
+      </div>
+      <div className="mt-3 flex h-20 items-end gap-1.5">
+        {bars.map((v, i) => (
+          <div key={i} className="flex flex-1 items-end rounded-full border-2 border-black bg-background">
+            <div
+              className="w-full rounded-full bg-primary transition-all duration-500 ease-out"
+              style={{ height: `${Math.max(10, v)}%` }}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 font-display text-xl">{values.at(-1) ?? 0}%</div>
+    </div>
+  );
+}
+
+function StreakBadge({ days }: { days: number }) {
+  return (
+    <div className="rounded-3xl border-2 border-black bg-primary p-4 shadow-brutal-sm">
+      <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-black/60">
+        <Flame className="h-3.5 w-3.5" /> Streak
+      </div>
+      <div className="mt-3 flex items-end gap-2">
+        <span className="font-display text-4xl leading-none">{days}</span>
+        <span className="pb-1 text-sm font-bold">days</span>
+      </div>
+      <div className="mt-3 flex gap-1">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className={`h-3 flex-1 rounded-full border-2 border-black ${i < days ? "bg-white" : "bg-black/10"}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function calculateRecentStreak(recent: Array<{ created_at: string }>) {
+  const days = new Set(recent.map((r) => new Date(r.created_at).toDateString()));
+  let streak = 0;
+  const cursor = new Date();
+  while (days.has(cursor.toDateString())) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
 }
 
 function Card({ label, value, icon, bg }: { label: string; value: React.ReactNode; icon: React.ReactNode; bg: string }) {
