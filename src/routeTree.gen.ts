@@ -13,12 +13,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPlayRouteImport } from './routes/_authenticated/play'
-import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCreateRouteImport } from './routes/_authenticated/create'
-import { Route as AuthenticatedBrowseRouteImport } from './routes/_authenticated/browse'
+import { Route as AuthenticatedCategoriesRouteImport } from './routes/_authenticated/categories'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -39,14 +39,14 @@ const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedPlayRoute = AuthenticatedPlayRouteImport.update({
   id: '/play',
   path: '/play',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
-  id: '/me',
-  path: '/me',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
@@ -64,32 +64,32 @@ const AuthenticatedCreateRoute = AuthenticatedCreateRouteImport.update({
   path: '/create',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedBrowseRoute = AuthenticatedBrowseRouteImport.update({
-  id: '/browse',
-  path: '/browse',
+const AuthenticatedCategoriesRoute = AuthenticatedCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/browse': typeof AuthenticatedBrowseRoute
+  '/categories': typeof AuthenticatedCategoriesRoute
   '/create': typeof AuthenticatedCreateRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/me': typeof AuthenticatedMeRoute
   '/play': typeof AuthenticatedPlayRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/results': typeof AuthenticatedResultsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/browse': typeof AuthenticatedBrowseRoute
+  '/categories': typeof AuthenticatedCategoriesRoute
   '/create': typeof AuthenticatedCreateRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/me': typeof AuthenticatedMeRoute
   '/play': typeof AuthenticatedPlayRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/results': typeof AuthenticatedResultsRoute
 }
 export interface FileRoutesById {
@@ -97,12 +97,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/_authenticated/browse': typeof AuthenticatedBrowseRoute
+  '/_authenticated/categories': typeof AuthenticatedCategoriesRoute
   '/_authenticated/create': typeof AuthenticatedCreateRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
-  '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/play': typeof AuthenticatedPlayRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
 }
 export interface FileRouteTypes {
@@ -110,35 +110,35 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
-    | '/browse'
+    | '/categories'
     | '/create'
     | '/dashboard'
     | '/home'
-    | '/me'
     | '/play'
+    | '/profile'
     | '/results'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
-    | '/browse'
+    | '/categories'
     | '/create'
     | '/dashboard'
     | '/home'
-    | '/me'
     | '/play'
+    | '/profile'
     | '/results'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
-    | '/_authenticated/browse'
+    | '/_authenticated/categories'
     | '/_authenticated/create'
     | '/_authenticated/dashboard'
     | '/_authenticated/home'
-    | '/_authenticated/me'
     | '/_authenticated/play'
+    | '/_authenticated/profile'
     | '/_authenticated/results'
   fileRoutesById: FileRoutesById
 }
@@ -178,18 +178,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedResultsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/play': {
       id: '/_authenticated/play'
       path: '/play'
       fullPath: '/play'
       preLoaderRoute: typeof AuthenticatedPlayRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/me': {
-      id: '/_authenticated/me'
-      path: '/me'
-      fullPath: '/me'
-      preLoaderRoute: typeof AuthenticatedMeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/home': {
@@ -213,33 +213,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/browse': {
-      id: '/_authenticated/browse'
-      path: '/browse'
-      fullPath: '/browse'
-      preLoaderRoute: typeof AuthenticatedBrowseRouteImport
+    '/_authenticated/categories': {
+      id: '/_authenticated/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof AuthenticatedCategoriesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedBrowseRoute: typeof AuthenticatedBrowseRoute
+  AuthenticatedCategoriesRoute: typeof AuthenticatedCategoriesRoute
   AuthenticatedCreateRoute: typeof AuthenticatedCreateRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
-  AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedPlayRoute: typeof AuthenticatedPlayRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedBrowseRoute: AuthenticatedBrowseRoute,
+  AuthenticatedCategoriesRoute: AuthenticatedCategoriesRoute,
   AuthenticatedCreateRoute: AuthenticatedCreateRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
-  AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedPlayRoute: AuthenticatedPlayRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
 }
 
@@ -255,3 +255,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

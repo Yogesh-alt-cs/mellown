@@ -7,7 +7,7 @@ import { getMyStats, updateProfile } from "@/lib/quiz.functions";
 import { LogOut, Trophy, Zap, Flame, Pencil, Check, X, Calendar, Heart } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/me")({
+export const Route = createFileRoute("/_authenticated/profile")({
   component: MePage,
 });
 

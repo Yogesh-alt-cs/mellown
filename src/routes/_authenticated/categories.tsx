@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { categories, categoryGroups, type Category } from "@/lib/categories";
 import { Search, X, ArrowRight } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/browse")({
+export const Route = createFileRoute("/_authenticated/categories")({
   component: BrowsePage,
 });
 
