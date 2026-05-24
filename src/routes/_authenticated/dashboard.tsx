@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 type TopTab = "dashboard" | "leaderboard";
-type LbTab = "global" | "weekly" | "friends";
+type LbTab = "global" | "weekly";
 
 function DashboardPage() {
   const [tab, setTab] = useState<TopTab>("dashboard");
@@ -105,7 +105,7 @@ function DashboardView() {
       <h2 className="mt-8 font-display text-lg">Recent quizzes</h2>
       <div className="mt-3 space-y-2">
         {recent.length === 0 ? (
-          <Link to="/browse" className="brutal-press flex items-center justify-between rounded-2xl border-2 border-dashed border-black/40 bg-white p-5 text-left">
+          <Link to="/categories" className="brutal-press flex items-center justify-between rounded-2xl border-2 border-dashed border-black/40 bg-white p-5 text-left">
             <div>
               <div className="font-display">No quizzes yet</div>
               <div className="text-sm text-black/60">Play one to see stats!</div>
