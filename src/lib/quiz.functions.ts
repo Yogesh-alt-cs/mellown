@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { loadLeaderboard } from "@/lib/leaderboard.server";
 
 const QuestionSchema = z.object({
   q: z.string(),
@@ -178,32 +179,11 @@ export const updateProfile = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const LeaderboardInput = z.object({ period: z.enum(["global", "weekly"]).default("global") }).optional();
+
 export const getLeaderboard = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabase } = context;
-    // Aggregate top players by total score in the last 30 days
-    const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
-    const { data, error } = await supabase
-      .from("quiz_results")
-      .select("user_id, score")
-      .gte("created_at", since);
-    if (error) throw new Error(error.message);
-    const totals = new Map<string, number>();
-    for (const r of data ?? []) {
-      totals.set(r.user_id, (totals.get(r.user_id) ?? 0) + (r.score ?? 0));
-    }
-    const sorted = [...totals.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20);
-    if (sorted.length === 0) return [] as Array<{ user_id: string; score: number; display_name: string | null; avatar_emoji: string | null }>;
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, display_name, avatar_emoji")
-      .in("id", sorted.map(([id]) => id));
-    const pmap = new Map((profiles ?? []).map((p) => [p.id, p]));
-    return sorted.map(([user_id, score]) => ({
-      user_id,
-      score,
-      display_name: pmap.get(user_id)?.display_name ?? "Player",
-      avatar_emoji: pmap.get(user_id)?.avatar_emoji ?? "🎯",
-    }));
+  .inputValidator((data: unknown) => LeaderboardInput.parse(data))
+  .handler(async ({ data }) => {
+    return loadLeaderboard(data?.period ?? "global");
   });
