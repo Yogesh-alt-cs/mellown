@@ -184,14 +184,15 @@ function LeaderboardView() {
               const medals = ["🥈", "🥇", "🥉"];
               const order = rank === 0 ? 1 : rank === 1 ? 0 : 2;
               return (
-                <div key={p.user_id} className="flex flex-col items-center">
-                  <div className="text-3xl">{medals[order]}</div>
-                  <div className="text-3xl">{p.avatar_emoji}</div>
+                <div key={p.user_id} className="leaderboard-podium flex flex-col items-center" style={{ animationDelay: `${order * 90}ms` }}>
+                  <div className="animate-float-slow text-3xl">{medals[order]}</div>
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-black bg-white text-3xl shadow-brutal-sm">{p.avatar_emoji}</div>
                   <div className="mt-1 max-w-full truncate text-center text-xs font-bold">{p.display_name}</div>
                   <div className={`mt-1 w-full ${heights[order]} ${colors[order]} flex items-center justify-center rounded-t-2xl border-2 border-black shadow-brutal-sm`}>
                     <div className="text-center">
                       <div className="font-display text-lg leading-none">#{rank + 1}</div>
                       <div className="text-[10px] font-bold">{p.score.toLocaleString()} XP</div>
+                      <div className="text-[10px] font-bold">{p.accuracy}% · {p.streak}d</div>
                     </div>
                   </div>
                 </div>
