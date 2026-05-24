@@ -227,6 +227,58 @@ function LeaderboardView() {
   );
 }
 
+function AccuracyGraph({ values }: { values: number[] }) {
+  const bars = values.length > 0 ? values : [0, 0, 0, 0, 0];
+  return (
+    <div className="rounded-3xl border-2 border-black bg-white p-4 shadow-brutal-sm">
+      <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-black/60">
+        <Activity className="h-3.5 w-3.5" /> Accuracy
+      </div>
+      <div className="mt-3 flex h-20 items-end gap-1.5">
+        {bars.map((v, i) => (
+          <div key={i} className="flex flex-1 items-end rounded-full border-2 border-black bg-background">
+            <div
+              className="w-full rounded-full bg-primary transition-all duration-500 ease-out"
+              style={{ height: `${Math.max(10, v)}%` }}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 font-display text-xl">{values.at(-1) ?? 0}%</div>
+    </div>
+  );
+}
+
+function StreakBadge({ days }: { days: number }) {
+  return (
+    <div className="rounded-3xl border-2 border-black bg-primary p-4 shadow-brutal-sm">
+      <div className="flex items-center gap-1 text-[10px] font-bold uppercase text-black/60">
+        <Flame className="h-3.5 w-3.5" /> Streak
+      </div>
+      <div className="mt-3 flex items-end gap-2">
+        <span className="font-display text-4xl leading-none">{days}</span>
+        <span className="pb-1 text-sm font-bold">days</span>
+      </div>
+      <div className="mt-3 flex gap-1">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className={`h-3 flex-1 rounded-full border-2 border-black ${i < days ? "bg-white" : "bg-black/10"}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function calculateRecentStreak(recent: Array<{ created_at: string }>) {
+  const days = new Set(recent.map((r) => new Date(r.created_at).toDateString()));
+  let streak = 0;
+  const cursor = new Date();
+  while (days.has(cursor.toDateString())) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
 function Card({ label, value, icon, bg }: { label: string; value: React.ReactNode; icon: React.ReactNode; bg: string }) {
   return (
     <div className={`rounded-2xl border-2 border-black p-4 shadow-brutal-sm ${bg}`}>
