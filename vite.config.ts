@@ -12,9 +12,22 @@ const tanstackStartConfig = {
   server: { entry: "server" },
 } as const;
 
+const vercelPublicEnvDefine = {
+  "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+    process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "",
+  ),
+  "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+    process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+      process.env.SUPABASE_PUBLISHABLE_KEY ??
+      process.env.SUPABASE_ANON_KEY ??
+      "",
+  ),
+};
+
 export default async function config(env: ConfigEnv) {
   if (process.env.VERCEL === "1") {
     return defineViteConfig({
+      define: vercelPublicEnvDefine,
       plugins: [
         tailwindcss(),
         tsConfigPaths({ projects: ["./tsconfig.json"] }),
