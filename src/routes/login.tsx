@@ -158,12 +158,19 @@ function LoginPage() {
         Continue with Google
       </button>
 
-      <button
-        onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-        className="mt-auto pt-8 text-center text-sm font-bold text-black/70 underline underline-offset-4"
-      >
-        {mode === "signin" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-      </button>
+      <div className="mt-8 rounded-2xl border-2 border-black bg-white px-4 py-4 text-center shadow-brutal-sm">
+        <p className="text-sm text-black/60">
+          {mode === "signin" ? "New here?" : "Already have an account?"}
+        </p>
+        <button
+          type="button"
+          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          className="mt-1 text-base font-display font-bold text-black underline underline-offset-4"
+        >
+          {mode === "signin" ? "Create an account" : "Sign in instead"}
+        </button>
+      </div>
+      <div className="h-8" />
     </div>
   );
 }
