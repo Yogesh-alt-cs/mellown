@@ -19,9 +19,23 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/home", replace: true });
-    });
+    const url = import.meta.env.VITE_SUPABASE_URL;
+    const key =
+      import.meta.env.VITE_SUPABASE_ANON_KEY ||
+      import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    if (!url || !key) {
+      console.error(
+        "[auth] Missing Supabase env. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY) in your Vercel project.",
+      );
+      toast.error("Authentication is not configured. Check deployment env vars.");
+      return;
+    }
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (data.session) navigate({ to: "/home", replace: true });
+      })
+      .catch((e) => console.error("[auth] getSession failed", e));
   }, [navigate]);
 
   async function onSubmit(e: React.FormEvent) {
@@ -33,7 +47,7 @@ function LoginPage() {
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
             data: { display_name: name || email.split("@")[0] },
           },
         });
@@ -42,7 +56,6 @@ function LoginPage() {
           toast.success("Account created!");
           navigate({ to: "/home", replace: true });
         } else {
-          // Fallback: try immediate sign-in (auto-confirm is on)
           const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
           if (signInErr) {
             toast.success("Check your email to confirm your account.");
@@ -56,6 +69,7 @@ function LoginPage() {
         navigate({ to: "/home", replace: true });
       }
     } catch (err: unknown) {
+      console.error("[auth] submit failed", err);
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
@@ -66,16 +80,18 @@ function LoginPage() {
     setLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/auth/callback`,
       });
       if (result.error) {
+        console.error("[auth] google sign-in error", result.error);
         toast.error("Could not sign in with Google");
         setLoading(false);
         return;
       }
       if (result.redirected) return;
       navigate({ to: "/home", replace: true });
-    } catch {
+    } catch (e) {
+      console.error("[auth] google sign-in threw", e);
       toast.error("Google sign-in failed");
       setLoading(false);
     }
